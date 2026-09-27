@@ -41,9 +41,18 @@
     .reveal{transition-duration:.8s;transition-timing-function:cubic-bezier(.2,1.35,.4,1)}
     .project:hover,.skillbox:hover,.win:hover,.signal-card:hover{box-shadow:0 20px 55px rgba(128,83,204,.16)}
     .project.reveal.visible,.skillbox.reveal.visible,.win.reveal.visible{transition-delay:var(--stagger,0ms)}
+    .section-head.reveal{transform:translateX(-64px)}.section-head.reveal.visible{transform:translateX(0)}
+    .role.reveal:nth-child(even){transform:translateX(64px)}.role.reveal:nth-child(odd){transform:translateX(-64px)}.role.reveal.visible{transform:translateX(0)}
+    .project.reveal:nth-child(even){transform:translateX(56px) scale(.96)}.project.reveal:nth-child(odd){transform:translateX(-56px) scale(.96)}.project.reveal.visible{transform:translateX(0) scale(1)}
+    .project{cursor:pointer}.project:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.project::before{content:"OPEN PROJECT ↗";position:absolute;top:25px;right:25px;font:500 11px "DM Mono",monospace;letter-spacing:.05em;color:var(--accent2)}
+    .project-dialog{border:1px solid #7c638e;border-radius:26px;padding:0;background:var(--panel);color:var(--ink);width:min(560px,calc(100vw - 32px));max-height:min(82vh,720px);box-shadow:0 35px 100px rgba(0,0,0,.65)}
+    .project-dialog[open]{animation:popup-slide .55s cubic-bezier(.18,1.35,.35,1) both}.project-dialog::backdrop{background:rgba(9,6,13,.78);backdrop-filter:blur(8px);animation:backdrop-in .35s both}
+    @keyframes popup-slide{from{opacity:0;transform:translateY(75px) scale(.86)}65%{opacity:1;transform:translateY(-10px) scale(1.025)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes backdrop-in{from{opacity:0}to{opacity:1}}
+    .dialog-content{padding:clamp(26px,5vw,42px)}.dialog-top{display:flex;justify-content:space-between;align-items:start;gap:20px}.dialog-close{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:50%;width:42px;height:42px;cursor:pointer;font-size:24px;line-height:1;flex:none}.dialog-close:hover{background:var(--accent);color:var(--bg)}.project-dialog h2{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-.05em;margin:28px 0 18px}.project-dialog p{color:var(--muted);font-size:16px;line-height:1.7;margin:0}.project-dialog .tags{margin-top:28px}.project-dialog .project-links{margin-top:28px;flex-wrap:wrap}
     @media(max-width:900px){.stat-viz{grid-template-columns:1fr 1fr}.orb.one{right:2%;top:28px}.orb.two{right:24%;top:150px}.orb.three{left:auto;right:8%;top:300px}.hero-grid,.section-head,.about-grid,.contact-box{grid-template-columns:1fr}.hero-grid{gap:30px}.signal-card{max-width:520px}.section-head{gap:16px}.role{grid-template-columns:1fr;gap:10px}.project,.project.featured,.project.compact{grid-column:span 12}.skills-grid{grid-template-columns:1fr 1fr}.wins{grid-template-columns:1fr 1fr}}
     @media(max-width:620px){.hero-orbit{opacity:.55}.orb.one{width:76px;height:76px;right:-10px}.orb.two{width:42px;height:42px;right:20%;top:140px}.orb.three{display:none}.stat-viz{grid-template-columns:1fr 1fr}.wrap{padding:0 18px}.navlinks a:not(.nav-cta){display:none}.hero{padding-top:44px}.hero h1{font-size:58px}.hero-copy{font-size:17px}.skills-grid,.wins{grid-template-columns:1fr}.project{min-height:auto}.contact{padding-top:80px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.orb,.project,.skillbox,.win,.signal-card{transition:none!important;transform:none!important}.orb{animation:none!important;translate:none!important}.hero h1,.hero-copy,.hero-actions{animation:none!important}.scroll-progress{display:none}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.section-head.reveal,.role.reveal{opacity:1;transform:none!important;transition:none}.orb,.project,.skillbox,.win,.signal-card{transition:none!important;transform:none!important}.orb{animation:none!important;translate:none!important}.hero h1,.hero-copy,.hero-actions,.project-dialog[open],.project-dialog::backdrop{animation:none!important}.scroll-progress{display:none}}
   </style>
 </head>
 <body>
@@ -103,13 +112,19 @@
 
   <section id="contact" class="contact"><div class="wrap"><div class="contact-box"><div><div class="mono" style="font-size:12px;font-weight:600;margin-bottom:20px">OPEN TO 2027 NEW-GRAD + INTERNSHIP OPPORTUNITIES</div><h2>Let’s build something useful.</h2></div><div><p>I’m most interested in software engineering, applied AI, backend/platform and AI-engineering roles where I can own real technical problems end-to-end.</p><div class="contact-links"><a href="https://www.linkedin.com/in/daniyah-rehman" target="_blank" rel="noreferrer"><span>LinkedIn</span><span>↗</span></a><a href="https://github.com/Daniyah-Rehman-20" target="_blank" rel="noreferrer"><span>GitHub</span><span>↗</span></a></div></div></div></div></section>
 </main>
+<dialog class="project-dialog" aria-labelledby="dialog-title"><div class="dialog-content"><div class="dialog-top"><span class="eyebrow" id="dialog-index"></span><button class="dialog-close" type="button" aria-label="Close project details">×</button></div><h2 id="dialog-title"></h2><p id="dialog-description"></p><div class="tags" id="dialog-tags"></div><div class="project-links" id="dialog-links"></div></div></dialog>
 <footer><div class="wrap foot"><span>© 2026 DANIYAH REHMAN</span><span>DESIGNED FOR CLARITY · BUILT FOR RECRUITERS</span></div></footer>
 <script>
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.projects,.skills-grid,.wins').forEach(group=>[...group.children].forEach((el,i)=>el.style.setProperty('--stagger',`${Math.min(i%6,5)*65}ms`)));
   if(!reduceMotion){const progress=document.querySelector('.scroll-progress');let queued=false;addEventListener('scroll',()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?scrollY/max:0})`;queued=false})},{passive:true});}
   const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.08});document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  document.querySelectorAll('.section-head').forEach(el=>{el.classList.add('reveal');obs.observe(el)});
   const buttons=[...document.querySelectorAll('.filter')], cards=[...document.querySelectorAll('.project')];buttons.forEach(b=>b.addEventListener('click',()=>{buttons.forEach(x=>x.classList.remove('active'));b.classList.add('active');let f=b.dataset.filter;cards.forEach(c=>c.classList.toggle('hide',f!=='all'&&!c.dataset.cat.split(' ').includes(f)));}));
+  const dialog=document.querySelector('.project-dialog');let opener=null;
+  function openProject(card){opener=card;dialog.querySelector('#dialog-index').textContent=card.querySelector('.project-index').textContent;dialog.querySelector('#dialog-title').textContent=card.querySelector('h3').textContent;dialog.querySelector('#dialog-description').textContent=card.querySelector('p').textContent;dialog.querySelector('#dialog-tags').replaceChildren(...[...card.querySelectorAll('.tag')].map(el=>el.cloneNode(true)));dialog.querySelector('#dialog-links').replaceChildren(...[...card.querySelectorAll('.project-links a')].map(el=>el.cloneNode(true)));dialog.showModal();dialog.querySelector('.dialog-close').focus()}
+  cards.forEach(card=>{card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`View details: ${card.querySelector('h3').textContent}`);card.addEventListener('click',e=>{if(e.target.closest('a'))return;openProject(card)});card.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('a')){e.preventDefault();openProject(card)}})});
+  dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>opener?.focus());
 
   if(!reduceMotion){
     const hero=document.querySelector('.hero');
@@ -119,7 +134,6 @@
     document.querySelectorAll('.project').forEach(card=>{
       card.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${-y*5}deg) rotateY(${x*6}deg) translateY(-4px)`;});
       card.addEventListener('pointerleave',()=>card.style.transform='');
-      card.addEventListener('click',()=>{card.animate([{transform:'scale(1)'},{transform:'scale(.985)'},{transform:'scale(1)'}],{duration:220,easing:'ease-out'});});
     });
 
     document.querySelectorAll('.orb').forEach((orb,i)=>{let dragging=false,sx=0,sy=0,ox=0,oy=0;orb.addEventListener('pointerdown',e=>{dragging=true;orb.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;const t=getComputedStyle(orb).transform;ox=0;oy=0;});orb.addEventListener('pointermove',e=>{if(!dragging)return;const dx=Math.max(-70,Math.min(70,e.clientX-sx));const dy=Math.max(-55,Math.min(55,e.clientY-sy));orb.style.transform=`translate(${dx}px,${dy}px) rotate(${dx*.18}deg)`;});orb.addEventListener('pointerup',()=>{dragging=false;orb.animate([{transform:orb.style.transform},{transform:'translate(0,0)'}],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)'});orb.style.transform='';});});
